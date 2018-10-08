@@ -4,7 +4,7 @@ source config.cfg
 
 function echocolor {
     echo "#######################################################################"
-    echo "$(tput setaf 3)##### $1 #####$(tput sgr0)"
+    echo "$(tput setaf 2)##### $1 #####$(tput sgr0)"
     echo "#######################################################################"
 
 }
@@ -50,6 +50,10 @@ function restart_db {
         systemctl start mariadb.service		
 }
 
+function set_passdb {
+		mysql_secure_installation
+}
+
 function rabbitmq_install {
         echocolor "Cai dat rabbitmq"
         sleep 3
@@ -70,6 +74,7 @@ function rabbitmq_create_user() {
 ### Thuc hien ham
 install_mariadb
 restart_db
+set_passdb
 echocolor "Tao user cho rabbitmq"
 rabbitmq_install
 rabbitmq_create_user
