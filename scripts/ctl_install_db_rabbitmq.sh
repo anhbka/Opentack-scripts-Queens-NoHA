@@ -47,7 +47,7 @@ function restart_db {
         echocolor "Khoi dong lai DB"
         sleep 3
         systemctl enable mariadb.service
-        systemctl start mariadb.service
+        systemctl start mariadb.service		
 }
 
 function rabbitmq_install {
@@ -61,7 +61,8 @@ function rabbitmq_install {
 }
 
 function rabbitmq_create_user() {
-	rabbitmqctl add_user openstack $RABBIT_PASS
+	sleep 5
+	rabbitmqctl add_user openstack Welcome123
 	sleep 5
 	rabbitmqctl set_permissions openstack ".*" ".*" ".*"
 }
@@ -69,9 +70,6 @@ function rabbitmq_create_user() {
 ### Thuc hien ham
 install_mariadb
 restart_db
-set_pass_db
-restart_db
-
 echocolor "Tao user cho rabbitmq"
 rabbitmq_install
 rabbitmq_create_user
