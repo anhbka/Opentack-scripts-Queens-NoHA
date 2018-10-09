@@ -77,10 +77,6 @@ EOF
       
 }
 
-##############################################################################
-# Thuc thi cac functions
-## Goi cac functions
-##############################################################################
 echocolor "Cau hinh cac goi chuan bi cho client"
 sleep 3
 

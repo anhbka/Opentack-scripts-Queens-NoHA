@@ -69,7 +69,7 @@ function neutron_config() {
         cp $ctl_dhcp_agent $ctl_dhcp_agent.orig
         cp $ctl_metadata_agent $ctl_metadata_agent.orig
         cp $ctl_l3_agent_conf $ctl_l3_agent_conf.orig
-		ops_edit $ctl_neutron_conf DEFAULT bind_host CTL1_IP_NIC1 
+		ops_edit $ctl_neutron_conf DEFAULT bind_host $CTL1_IP_NIC1 
         ops_edit $ctl_neutron_conf DEFAULT core_plugin ml2
         ops_edit $ctl_neutron_conf DEFAULT service_plugins router
         ops_edit $ctl_neutron_conf DEFAULT auth_strategy keystone    
@@ -154,7 +154,7 @@ function neutron_enable_restart() {
 #--------------------------#
 # Thuc thi cac functions   #
 ## Goi cac functions       #
-############################
+#--------------------------#
 source config.cfg
 source /root/admin-openrc
 ############################
@@ -183,4 +183,4 @@ echocolor "Restart dich vu NEUTRON"
 sleep 3
 neutron_enable_restart
 
-echocolor "Da cai dat xong NEUTRON"
+echocolor "Finish NEUTRON"

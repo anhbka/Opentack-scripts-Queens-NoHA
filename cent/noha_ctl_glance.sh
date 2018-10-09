@@ -39,7 +39,7 @@ FLUSH PRIVILEGES;"
 
 }
 
-#Tao endpoint,user cho glance
+
 function glance_user_endpoint() {
         openstack user create  glance --domain default --password $GLANCE_PASS
         openstack role add --project service --user glance admin
@@ -49,7 +49,7 @@ function glance_user_endpoint() {
         openstack endpoint create --region RegionOne image admin http://$CTL1_IP_NIC1:9292
 }
 
-#Cau hinh va cai dat glance
+
 function glance_install_config() {
 
         yum -y install openstack-glance
@@ -107,7 +107,7 @@ function bind_port () {
 		sed -i -e 's/Listen 8778/Listen 192.168.239.180:8778/g' /etc/httpd/conf.d/00-nova-placement-api.conf
 }
 
-#Dong bo DB cho lance
+
 function glance_syncdb() {
         su -s /bin/sh -c "glance-manage db_sync" glance
 }
@@ -129,10 +129,6 @@ function glance_create_image() {
         openstack image list       
 }
 
-############################
-# Thuc thi cac functions
-## Goi cac functions
-############################
 source config.cfg
 source /root/admin-openrc
 ############################

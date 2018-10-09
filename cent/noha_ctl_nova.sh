@@ -1,8 +1,5 @@
 #!/bin/bash -ex 
-##############################################################################
-### Script cai dat cac goi bo tro cho CTL
 
-### Khai bao bien de thuc hien
 
 source config.cfg
 
@@ -117,10 +114,6 @@ EOF
 chmod +x /root/demo-openrc
 }
 
-############################
-# Thuc thi cac functions
-## Goi cac functions
-############################
 echocolor "Cai dat Keystone"
 sleep 3
 

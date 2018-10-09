@@ -117,8 +117,8 @@ function install_memcached() {
         yum -y install memcached python-memcached
         cp /etc/sysconfig/memcached /etc/sysconfig/memcached.orig
         sed -i "s/-l 127.0.0.1,::1/-l 127.0.0.1,::1,$CTL1_IP_NIC1/g" /etc/sysconfig/memcached
-				systemctl enable memcached.service
-				systemctl start memcached.service
+		systemctl enable memcached.service
+		systemctl start memcached.service
 }
 
 ##############################################################################
