@@ -4,6 +4,8 @@
 
 # Khai bao bien de thuc hien
 
+
+
 source config.cfg
 
 function echocolor {
@@ -30,6 +32,13 @@ function ops_del {
     crudini --del "$1" "$2" "$3"
 }
 
+#cat << EOF | mysql -uroot 
+#GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'localhost' IDENTIFIED BY '$PASS_DATABASE_KEYSTONE';
+#GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'%' IDENTIFIED BY '$PASS_DATABASE_KEYSTONE';
+#GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'$CTL1_IP_NIC3' IDENTIFIED BY '$PASS_DATABASE_KEYSTONE';
+##FLUSH PRIVILEGES;"
+#EOF
+
 function create_keystone_db {
 				mysql -uroot -p$PASS_DATABASE_ROOT -e "CREATE DATABASE keystone;
 				GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'localhost' IDENTIFIED BY '$PASS_DATABASE_KEYSTONE';
@@ -50,7 +59,7 @@ function keystone_bind_port {
 		cp /usr/share/keystone/wsgi-keystone.conf /etc/httpd/conf.d/
 		sed -i -e 's/VirtualHost \*/VirtualHost 172.16.10.180/g' /etc/httpd/conf.d/wsgi-keystone.conf
 		sed -i -e 's/Listen 5000/Listen 172.16.10.180:5000/g' /etc/httpd/conf.d/wsgi-keystone.conf
-		sed -i -e 's/Listen 35357/Listen 172.16.10.180:35357/g' /etc/httpd/conf.d/wsgi-keystone.conf
+		sed -i -e 's/Listen 35357/Listen 172.16.10.180:5000/g' /etc/httpd/conf.d/wsgi-keystone.conf
 		sed -i -e 's/^Listen.*/Listen 10.10.10.180:80/g' /etc/httpd/conf/httpd.conf
 }
 

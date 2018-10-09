@@ -20,20 +20,20 @@ bash setup_ip.sh controller 192.168.239.180 10.10.10.180 172.16.10.180
 
 ``` sh
 curl -O https://raw.githubusercontent.com/anhbka/Opentack-scripts-Queens-NoHA/master/scripts/setup_ip.sh
-bash setup_ip.sh compute1 192.168.239.181 10.10.10.181 172.16.10.181
+bash setup_ip.sh compute1 10.10.10.181 172.16.10.181 192.168.239.181
 ```
 * Trên Compute2 thực hiện
 
 ``` sh
 curl -O https://raw.githubusercontent.com/anhbka/Opentack-scripts-Queens-NoHA/master/scripts/setup_ip.sh
-bash setup_ip.sh compute2 192.168.239.182 10.10.10.182 172.16.10.182
+bash setup_ip.sh compute2 10.10.10.182 172.16.10.182 192.168.239.182
 ```
 
 * Thực hiện trên máy Cinder
 
 ``` sh
 curl -O https://raw.githubusercontent.com/anhbka/Opentack-scripts-Queens-NoHA/master/scripts/setup_ip.sh
-bash setup_ip.sh cinder 192.168.239.183 10.10.10.183 172.16.10.183
+bash setup_ip.sh cinder 10.10.10.183 172.16.10.183 192.168.239.183
 ```
 
 ### Thực hiện script cài đặt OpenStack

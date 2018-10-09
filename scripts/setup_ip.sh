@@ -18,7 +18,7 @@ if [ $# -ne 4 ]
     then
         echo -e "Nhap du 4 thong so: \e[38;5;82m HOSTNAME IP_NIC1 IP_NIC2 IP_NIC3 \e[0m"
         echo ""
-        echo -e "Vi du:\e[101mbash $0 ctl1 192.168.239.180 10.10.10.180 172.16.10.180 \e[0m"
+        echo -e "Vi du:\e[101mbash $0 ctl1 10.10.10.180 172.16.10.180 192.168.239.180 \e[0m"
         exit 1;
 fi
 
