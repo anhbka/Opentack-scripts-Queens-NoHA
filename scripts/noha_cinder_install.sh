@@ -6,7 +6,7 @@ source config.cfg
 
 function echocolor {
     echo "#######################################################################"
-    echo "$(tput setaf 3)##### $1 #####$(tput sgr0)"
+    echo "$(tput setaf 2)##### $1 #####$(tput sgr0)"
     echo "#######################################################################"
 
 }
@@ -28,14 +28,32 @@ function ops_del {
     crudini --del $1 $2 $3
 }
 
+function install_mtr () {
+			yum -y install crudini wget vim
+}
+
 function cin_cinder_install {
-				echocolor "Cai dat cinder-volume tren Cinder nod"
+				echocolor "Cai dat cinder-volume tren Cinder"
         sleep 3
         yum -y install openstack-cinder targetcli python-keystone
 
 
 }
+function create_lvm {
+				echocolor "Cai dat LVM"
+				sleep 3
+				yum -y install lvm2
+				systemctl enable lvm2-lvmetad.service
+				systemctl start lvm2-lvmetad.service
 
+				pvcreate /dev/sdb
+				vgcreate cinder-volumes /dev/sdb
+
+				cp /etc/lvm/lvm.conf /etc/lvm/lvm.conf.orig
+				
+        sed -i '141i\        filter = [ "a/sdb/", "r/.*/"]' /etc/lvm/lvm.conf
+        
+}
 function cin_cinder_config {
         cin_cinder_conf=/etc/cinder/cinder.conf
         cp $cin_cinder_conf $cin_cinder_conf.orig
@@ -85,23 +103,11 @@ function cin_cinder_restart {
 }
 
 
-function create_lvm {
-				echocolor "Cai dat LVM"
-				sleep 3
-				yum -y install lvm2
-				systemctl enable lvm2-lvmetad.service
-				systemctl start lvm2-lvmetad.service
-
-				pvcreate /dev/sdb
-				vgcreate cinder-volumes /dev/sdb
-
-				cp /etc/lvm/lvm.conf /etc/lvm/lvm.conf.orig
-				
-        sed -i '141i\        filter = [ "a/sdb/", "r/.*/"]' /etc/lvm/lvm.conf
-        
-}
 
 echocolor "Bat dau cai dat CINDER"
+
+install_mtr
+
 sleep 3
 create_lvm
 cin_cinder_install
