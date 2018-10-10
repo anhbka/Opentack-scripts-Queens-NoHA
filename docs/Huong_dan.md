@@ -12,7 +12,7 @@
 
 ``` sh
 curl -O https://raw.githubusercontent.com/anhbka/Opentack-scripts-Queens-NoHA/master/scripts/setup_ip.sh
-bash setup_ip.sh controller 10.10.10.180 172.16.10.180 192.168.239.180
+bash setup_ip.sh controller 192.168.239.180 10.10.10.180 172.16.10.180 
 ```
 
 
@@ -20,20 +20,20 @@ bash setup_ip.sh controller 10.10.10.180 172.16.10.180 192.168.239.180
 
 ``` sh
 curl -O https://raw.githubusercontent.com/anhbka/Opentack-scripts-Queens-NoHA/master/scripts/setup_ip.sh
-bash setup_ip.sh compute1 10.10.10.181 172.16.10.181 192.168.239.181
+bash setup_ip.sh compute1 192.168.239.181 10.10.10.181 172.16.10.181 
 ```
 * Trên Compute2 thực hiện
 
 ``` sh
 curl -O https://raw.githubusercontent.com/anhbka/Opentack-scripts-Queens-NoHA/master/scripts/setup_ip.sh
-bash setup_ip.sh compute2 10.10.10.182 172.16.10.182 192.168.239.182
+bash setup_ip.sh compute2 192.168.239.182 10.10.10.182 172.16.10.182 
 ```
 
 * Thực hiện trên máy Cinder
 
 ``` sh
 curl -O https://raw.githubusercontent.com/anhbka/Opentack-scripts-Queens-NoHA/master/scripts/setup_ip.sh
-bash setup_ip.sh cinder1 10.10.10.183 172.16.10.183 192.168.239.183
+bash setup_ip.sh cinder1 192.168.239.183 10.10.10.183 172.16.10.183 
 ```
 
 ### Thực hiện script cài đặt OpenStack
@@ -180,7 +180,21 @@ Kiểm tra :
 [root@controller ~]#
 ```
 
+``` sh
+[root@controller ~]#  openstack compute service list
++----+------------------+------------+----------+---------+-------+----------------------------+
+| ID | Binary           | Host       | Zone     | Status  | State | Updated At                 |
++----+------------------+------------+----------+---------+-------+----------------------------+
+|  1 | nova-consoleauth | controller | internal | enabled | up    | 2018-10-09T10:07:40.000000 |
+|  2 | nova-scheduler   | controller | internal | enabled | up    | 2018-10-09T10:07:37.000000 |
+|  3 | nova-conductor   | controller | internal | enabled | up    | 2018-10-09T10:07:37.000000 |
+|  6 | nova-compute     | compute2   | nova     | enabled | up    | 2018-10-09T10:07:45.000000 |
+|  7 | nova-compute     | compute1   | nova     | enabled | up    | 2018-10-09T10:07:39.000000 |
++----+------------------+------------+----------+---------+-------+----------------------------+
+[root@controller ~]#
+```
 
+4. Cài đặt trên node Cinder
 
 
 
