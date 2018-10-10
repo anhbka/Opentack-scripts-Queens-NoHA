@@ -81,7 +81,7 @@ function neutron_config() {
                 
         ops_edit $ctl_neutron_conf database connection  mysql+pymysql://neutron:$PASS_DATABASE_NEUTRON@$CTL1_IP_NIC1/neutron
         
-        ops_edit $ctl_neutron_conf keystone_authtoken www_authenticate_uri http://$CTL1_IP_NIC1:5000
+        ops_edit $ctl_neutron_conf keystone_authtoken auth_uri http://$CTL1_IP_NIC1:5000
         ops_edit $ctl_neutron_conf keystone_authtoken auth_url http://$CTL1_IP_NIC1:5000
         ops_edit $ctl_neutron_conf keystone_authtoken memcached_servers $CTL1_IP_NIC1:11211
         ops_edit $ctl_neutron_conf keystone_authtoken auth_type password

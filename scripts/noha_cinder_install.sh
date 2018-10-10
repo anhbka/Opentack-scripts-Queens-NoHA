@@ -33,7 +33,7 @@ function install_mtr () {
 }
 
 function cin_cinder_install {
-				echocolor "Cai dat cinder-volume tren Cinder"
+				echocolor "Cai dat cinder-volume tren node Cinder"
         sleep 3
         yum -y install openstack-cinder targetcli python-keystone
 

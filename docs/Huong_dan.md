@@ -168,16 +168,20 @@ Kiểm tra :
 
 ``` sh
 [root@controller ~]# openstack network agent list
-+--------------------------------------+----------------+------------+-------------------+-------+-------+------------------------+
-| ID                                   | Agent Type     | Host       | Availability Zone | Alive | State | Binary                 |
-+--------------------------------------+----------------+------------+-------------------+-------+-------+------------------------+
-| 32b8cac2-4a93-4c03-87f4-d5e4b5bf6c04 | DHCP agent     | compute1   | nova              | :-)   | UP    | neutron-dhcp-agent     |
-| 37bee57f-891f-450d-96c4-8dd49cb4e352 | Metadata agent | compute2   | None              | :-)   | UP    | neutron-metadata-agent |
-| 478ded24-0f7e-48ae-8274-3352fff73bb5 | Metadata agent | compute1   | None              | :-)   | UP    | neutron-metadata-agent |
-| 643925b1-09f3-4f58-9a32-b259a2e040e5 | L3 agent       | controller | nova              | :-)   | UP    | neutron-l3-agent       |
-| cfbaf3dd-8cc5-4ec7-8c24-dfb0b1003bcc | DHCP agent     | compute2   | nova              | :-)   | UP    | neutron-dhcp-agent     |
-+--------------------------------------+----------------+------------+-------------------+-------+-------+------------------------+
++--------------------------------------+--------------------+------------+-------------------+-------+-------+---------------------------+
+| ID                                   | Agent Type         | Host       | Availability Zone | Alive | State | Binary                    |
++--------------------------------------+--------------------+------------+-------------------+-------+-------+---------------------------+
+| 250bce8a-ad42-445d-b99e-2f0c055b9b36 | Linux bridge agent | compute2   | None              | :-)   | UP    | neutron-linuxbridge-agent |
+| 32b8cac2-4a93-4c03-87f4-d5e4b5bf6c04 | DHCP agent         | compute1   | nova              | :-)   | UP    | neutron-dhcp-agent        |
+| 37bee57f-891f-450d-96c4-8dd49cb4e352 | Metadata agent     | compute2   | None              | :-)   | UP    | neutron-metadata-agent    |
+| 478ded24-0f7e-48ae-8274-3352fff73bb5 | Metadata agent     | compute1   | None              | :-)   | UP    | neutron-metadata-agent    |
+| 643925b1-09f3-4f58-9a32-b259a2e040e5 | L3 agent           | controller | nova              | :-)   | UP    | neutron-l3-agent          |
+| 65fc5152-9d32-450e-bc85-ff6a0a92ae1f | Linux bridge agent | compute1   | None              | :-)   | UP    | neutron-linuxbridge-agent |
+| bfc376e8-fe37-441a-85e0-2029da169059 | Linux bridge agent | controller | None              | :-)   | UP    | neutron-linuxbridge-agent |
+| cfbaf3dd-8cc5-4ec7-8c24-dfb0b1003bcc | DHCP agent         | compute2   | nova              | :-)   | UP    | neutron-dhcp-agent        |
++--------------------------------------+--------------------+------------+-------------------+-------+-------+---------------------------+
 [root@controller ~]#
+
 ```
 
 ``` sh
