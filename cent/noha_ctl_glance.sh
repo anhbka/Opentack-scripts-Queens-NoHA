@@ -59,7 +59,7 @@ function glance_install_config() {
         cp $glance_registry_conf $glance_registry_conf.orig
 
         ###glance_api_conf
-				ops_edit $glance_api_conf DEFAULT bind_host $CTL1_IP_NIC1
+#				ops_edit $glance_api_conf DEFAULT bind_host $CTL1_IP_NIC1
 				ops_edit $glance_api_conf DEFAULT transport_url rabbit://openstack:$RABBIT_PASS@$CTL1_IP_NIC1
 
 				ops_edit $glance_api_conf glance_store stores file,http
@@ -82,7 +82,7 @@ function glance_install_config() {
         ops_edit $glance_api_conf oslo_messaging_notifications driver messagingv2
 
         ###glance_registry_conf
-				ops_edit $glance_registry_conf DEFAULT bind_host $CTL1_IP_NIC1
+#				ops_edit $glance_registry_conf DEFAULT bind_host $CTL1_IP_NIC1
 				ops_edit $glance_registry_conf DEFAULT transport_url rabbit://openstack:$RABBIT_PASS@$CTL1_IP_NIC1
         ops_edit $glance_registry_conf database connection mysql+pymysql://glance:$PASS_DATABASE_GLANCE@$CTL1_IP_NIC1/glance
 
@@ -102,10 +102,10 @@ function glance_install_config() {
         
 }
 
-function bind_port () {
-		sed -i -e 's/VirtualHost \*/VirtualHost 192.168.239.180/g' /etc/httpd/conf.d/00-nova-placement-api.conf
-		sed -i -e 's/Listen 8778/Listen 192.168.239.180:8778/g' /etc/httpd/conf.d/00-nova-placement-api.conf
-}
+#function bind_port () {
+#		sed -i -e 's/VirtualHost \*/VirtualHost 192.168.239.180/g' /etc/httpd/conf.d/00-nova-placement-api.conf
+#		sed -i -e 's/Listen 8778/Listen 192.168.239.180:8778/g' /etc/httpd/conf.d/00-nova-placement-api.conf
+#}
 
 
 function glance_syncdb() {
@@ -150,9 +150,9 @@ echocolor "Dong bo DB cho Glance"
 sleep 3
 glance_syncdb
 
-echocolor "Bind_port"
-sleep 3
-bind_host
+#echocolor "Bind_port"
+#sleep 3
+#bind_host
 
 echocolor "Restart dich vu glance"
 sleep 3

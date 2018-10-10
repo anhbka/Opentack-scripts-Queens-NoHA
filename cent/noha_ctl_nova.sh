@@ -72,13 +72,13 @@ function keystone_endpoint() {
 
 }
 
-function bind_port {
-cp /usr/share/keystone/wsgi-keystone.conf /etc/httpd/conf.d/
-sed -i -e 's/VirtualHost \*/VirtualHost 192.168.239.180/g' /etc/httpd/conf.d/wsgi-keystone.conf
-sed -i -e 's/Listen 5000/Listen 192.168.239.180:5000/g' /etc/httpd/conf.d/wsgi-keystone.conf
-sed -i -e 's/Listen 35357/Listen 192.168.239.180:5000/g' /etc/httpd/conf.d/wsgi-keystone.conf
-sed -i -e 's/^Listen.*/Listen 10.10.10.180:80/g' /etc/httpd/conf/httpd.conf
-}
+#function bind_port {
+#cp /usr/share/keystone/wsgi-keystone.conf /etc/httpd/conf.d/
+#sed -i -e 's/VirtualHost \*/VirtualHost 192.168.239.180/g' /etc/httpd/conf.d/wsgi-keystone.conf
+#sed -i -e 's/Listen 5000/Listen 192.168.239.180:5000/g' /etc/httpd/conf.d/wsgi-keystone.conf
+#sed -i -e 's/Listen 35357/Listen 192.168.239.180:5000/g' /etc/httpd/conf.d/wsgi-keystone.conf
+#sed -i -e 's/^Listen.*/Listen 10.10.10.180:80/g' /etc/httpd/conf/httpd.conf
+#}
 
 function keystone_create_adminrc {
 cat << EOF > /root/admin-openrc
@@ -136,7 +136,7 @@ keystone_bootstrap
 echocolor "Cau hinh http"
 sleep 3
 keystone_config_http
-bind_port
+#bind_port
 
 echocolor "Tao bien moi truong"
 sleep 3
