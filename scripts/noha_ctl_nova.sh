@@ -1,5 +1,7 @@
 #!/bin/bash -ex 
-
+##############################################################################
+### Script cai dat cac goi bo tro cho CTL
+### Khai bao bien de thuc hien
 
 source config.cfg
 
@@ -27,123 +29,175 @@ function ops_del {
     crudini --del "$1" "$2" "$3"
 }
 
-function create_keystone_db {
-				mysql -uroot -p$PASS_DATABASE_ROOT -e "CREATE DATABASE keystone;
-				GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'localhost' IDENTIFIED BY '$PASS_DATABASE_KEYSTONE';
-				GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'%' IDENTIFIED BY '$PASS_DATABASE_KEYSTONE';
-				GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'$CTL1_IP_NIC1' IDENTIFIED BY '$PASS_DATABASE_KEYSTONE';
-				FLUSH PRIVILEGES;"
+function nova_create_db {
+      mysql -uroot -p$PASS_DATABASE_ROOT -e "CREATE DATABASE nova_api;
+      GRANT ALL PRIVILEGES ON nova_api.* TO 'nova'@'localhost' IDENTIFIED BY '$PASS_DATABASE_NOVA_API';
+      GRANT ALL PRIVILEGES ON nova_api.* TO 'nova'@'%' IDENTIFIED BY '$PASS_DATABASE_NOVA_API';
+      GRANT ALL PRIVILEGES ON nova_api.* TO 'nova'@'$CTL1_IP_NIC1' IDENTIFIED BY '$PASS_DATABASE_NOVA_API';
+
+      CREATE DATABASE nova;
+      GRANT ALL PRIVILEGES ON nova.* TO 'nova'@'localhost' IDENTIFIED BY '$PASS_DATABASE_NOVA';
+      GRANT ALL PRIVILEGES ON nova.* TO 'nova'@'%' IDENTIFIED BY '$PASS_DATABASE_NOVA';
+      GRANT ALL PRIVILEGES ON nova.* TO 'nova'@'$CTL1_IP_NIC1' IDENTIFIED BY '$PASS_DATABASE_NOVA';
+			
+			CREATE DATABASE nova_cell0;
+      GRANT ALL PRIVILEGES ON nova_cell0.* TO 'nova'@'localhost' IDENTIFIED BY '$PASS_DATABASE_NOVA_CELL';
+      GRANT ALL PRIVILEGES ON nova_cell0.* TO 'nova'@'%' IDENTIFIED BY '$PASS_DATABASE_NOVA_CELL';
+      GRANT ALL PRIVILEGES ON nova_cell0.* TO 'nova'@'$CTL1_IP_NIC1' IDENTIFIED BY '$PASS_DATABASE_NOVA_CELL';
+      FLUSH PRIVILEGES;"
 }
 
-function keystone_install_config {
-        yum -y install openstack-keystone httpd mod_wsgi
-        keystone_conf=/etc/keystone/keystone.conf
-        cp $keystone_conf $keystone_conf.orig        
-        ops_edit $keystone_conf database connection mysql+pymysql://keystone:$PASS_DATABASE_KEYSTONE@$CTL1_IP_NIC1/keystone
-        ops_edit $keystone_conf token provider fernet
-}
-function keystone_syncdb {
-          su -s /bin/sh -c "keystone-manage db_sync" keystone
-          keystone-manage fernet_setup --keystone-user keystone --keystone-group keystone
-          keystone-manage credential_setup --keystone-user keystone --keystone-group keystone
-}
+function nova_user_endpoint {
+	openstack user create nova --domain default --password $NOVA_PASS
+	openstack role add --project service --user nova admin
+	openstack service create --name nova --description "OpenStack Compute" compute
+	openstack endpoint create --region RegionOne compute public http://$CTL1_IP_NIC1:8774/v2.1/%\(tenant_id\)s
+	openstack endpoint create --region RegionOne compute internal http://$CTL1_IP_NIC1:8774/v2.1/%\(tenant_id\)s
+	openstack endpoint create --region RegionOne compute admin http://$CTL1_IP_NIC1:8774/v2.1/%\(tenant_id\)s
 
-function keystone_bootstrap {
-          keystone-manage bootstrap --bootstrap-password $ADMIN_PASS \
-          --bootstrap-admin-url http://$CTL1_IP_NIC1:5000/v3/ \
-          --bootstrap-internal-url http://$CTL1_IP_NIC1:5000/v3/ \
-          --bootstrap-public-url http://$CTL1_IP_NIC1:5000/v3/ \
-          --bootstrap-region-id RegionOne
-}
-
-function keystone_config_http() {
-          echo "ServerName `hostname`" >> /etc/httpd/conf/httpd.conf
-          ln -s /usr/share/keystone/wsgi-keystone.conf /etc/httpd/conf.d/
-          systemctl enable httpd.service
-          systemctl start httpd.service 
-}
-
-function keystone_endpoint() {
-        openstack project create service --domain default --description "Service Project" 
-        openstack project create demo --domain default --description "Demo Project" 
-        openstack user create demo --domain default --password $DEMO_PASS
-        openstack role create user
-        openstack role add --project demo --user demo user
+	openstack user create placement --domain default --password $PLACEMENT_PASS
+	openstack role add --project service --user placement admin
+	openstack service create --name placement --description "Placement API" placement
+	openstack endpoint create --region RegionOne placement public http://$CTL1_IP_NIC1:8778
+	openstack endpoint create --region RegionOne placement internal http://$CTL1_IP_NIC1:8778
+	openstack endpoint create --region RegionOne placement admin http://$CTL1_IP_NIC1:8778
 
 }
 
-#function bind_port {
-#cp /usr/share/keystone/wsgi-keystone.conf /etc/httpd/conf.d/
-#sed -i -e 's/VirtualHost \*/VirtualHost 192.168.239.180/g' /etc/httpd/conf.d/wsgi-keystone.conf
-#sed -i -e 's/Listen 5000/Listen 192.168.239.180:5000/g' /etc/httpd/conf.d/wsgi-keystone.conf
-#sed -i -e 's/Listen 35357/Listen 192.168.239.180:5000/g' /etc/httpd/conf.d/wsgi-keystone.conf
-#sed -i -e 's/^Listen.*/Listen 10.10.10.180:80/g' /etc/httpd/conf/httpd.conf
-#}
+function nova_install {
+				yum -y install openstack-nova-api openstack-nova-conductor \
+				openstack-nova-console openstack-nova-novncproxy \
+				openstack-nova-scheduler openstack-nova-placement-api
+}
 
-function keystone_create_adminrc {
-cat << EOF > /root/admin-openrc
-export OS_PROJECT_DOMAIN_NAME=Default
-export OS_USER_DOMAIN_NAME=Default
-export OS_PROJECT_NAME=admin
-export OS_USERNAME=admin
-export OS_PASSWORD=$ADMIN_PASS
-export OS_AUTH_URL=http://$CTL1_IP_NIC1:5000/v3
-export OS_IDENTITY_API_VERSION=3
-export OS_IMAGE_API_VERSION=2
+function nova_config {
+        ctl_nova_conf=/etc/nova/nova.conf
+        cp $ctl_nova_conf $ctl_nova_conf.orig
+#		ops_edit $ctl_nova_conf DEFAULT bind_host $CTL1_IP_NIC1
+        ops_edit $ctl_nova_conf DEFAULT enabled_apis osapi_compute,metadata
+        ops_edit $ctl_nova_conf DEFAULT transport_url rabbit://openstack:$RABBIT_PASS@$CTL1_IP_NIC1
+				
+        ops_edit $ctl_nova_conf DEFAULT my_ip $CTL1_IP_NIC1
+        ops_edit $ctl_nova_conf DEFAULT use_neutron true
+        ops_edit $ctl_nova_conf DEFAULT firewall_driver nova.virt.firewall.NoopFirewallDriver
+        ops_edit $ctl_nova_conf DEFAULT osapi_compute_listen \$my_ip
+        ops_edit $ctl_nova_conf DEFAULT metadata_listen \$my_ip
+        
+        ops_edit $ctl_nova_conf DEFAULT instance_usage_audit True
+        ops_edit $ctl_nova_conf DEFAULT instance_usage_audit_period hour
+        ops_edit $ctl_nova_conf DEFAULT notify_on_state_change vm_and_task_state
 
-EOF
+        
+        ops_edit $ctl_nova_conf api_database connection  mysql+pymysql://nova:$PASS_DATABASE_NOVA_API@$CTL1_IP_NIC1/nova_api
+        ops_edit $ctl_nova_conf database connection  mysql+pymysql://nova:$PASS_DATABASE_NOVA@$CTL1_IP_NIC1/nova
+				
+        ops_edit $ctl_nova_conf api auth_strategy  keystone
 
-sleep 5
-echocolor "Execute environment script"
-chmod +x /root/admin-openrc
-cat  /root/admin-openrc >> /etc/profile
+        ops_edit $ctl_nova_conf keystone_authtoken auth_uri http://$CTL1_IP_NIC1:5000		
+        ops_edit $ctl_nova_conf keystone_authtoken auth_url http://$CTL1_IP_NIC1:5000
+        ops_edit $ctl_nova_conf keystone_authtoken memcached_servers $CTL1_IP_NIC1:11211
+        ops_edit $ctl_nova_conf keystone_authtoken auth_type password
+        ops_edit $ctl_nova_conf keystone_authtoken project_domain_name Default
+        ops_edit $ctl_nova_conf keystone_authtoken user_domain_name Default
+        ops_edit $ctl_nova_conf keystone_authtoken project_name service
+        ops_edit $ctl_nova_conf keystone_authtoken username nova
+        ops_edit $ctl_nova_conf keystone_authtoken password $NOVA_PASS
+
+        ops_edit $ctl_nova_conf vnc vncserver_listen \$my_ip
+        ops_edit $ctl_nova_conf vnc vncserver_proxyclient_address \$my_ip
+        ops_edit $ctl_nova_conf vnc novncproxy_host \$my_ip
+        
+        ops_edit $ctl_nova_conf glance api_servers http://$CTL1_IP_NIC1:9292
+        
+        ops_edit $ctl_nova_conf oslo_concurrency lock_path /var/lib/nova/tmp
+				
+        ops_edit $ctl_nova_conf placement os_region_name RegionOne
+        ops_edit $ctl_nova_conf placement project_domain_name Default
+        ops_edit $ctl_nova_conf placement project_name service
+        ops_edit $ctl_nova_conf placement auth_type password
+        ops_edit $ctl_nova_conf placement user_domain_name Default
+        ops_edit $ctl_nova_conf placement auth_url http://$CTL1_IP_NIC1:5000/v3
+        ops_edit $ctl_nova_conf placement username placement
+        ops_edit $ctl_nova_conf placement password $PLACEMENT_PASS
+        
+        ops_edit $ctl_nova_conf neutron url http://$CTL1_IP_NIC1:9696
+        ops_edit $ctl_nova_conf neutron auth_url http://$CTL1_IP_NIC1:5000
+        ops_edit $ctl_nova_conf neutron auth_type password
+        ops_edit $ctl_nova_conf neutron project_domain_name Default
+        ops_edit $ctl_nova_conf neutron user_domain_name Default
+        ops_edit $ctl_nova_conf neutron project_name service
+        ops_edit $ctl_nova_conf neutron username neutron
+        ops_edit $ctl_nova_conf neutron password $NEUTRON_PASS
+        ops_edit $ctl_nova_conf neutron service_metadata_proxy True
+        ops_edit $ctl_nova_conf neutron metadata_proxy_shared_secret $METADATA_SECRET
+				
+        ops_edit $ctl_nova_conf scheduler discover_hosts_in_cells_interval 300
+
+        
+        ops_edit $ctl_nova_conf oslo_messaging_notifications driver messagingv2
+        ops_edit $ctl_nova_conf cinder os_region_name RegionOne
+}
+
+
+function nova_syncdb {
+				cat ./files/00-nova-placement-api.conf > /etc/httpd/conf.d/00-nova-placement-api.conf
+				systemctl restart httpd
+				
+        su -s /bin/sh -c "nova-manage api_db sync" nova
+        su -s /bin/sh -c "nova-manage cell_v2 map_cell0" nova
+				su -s /bin/sh -c "nova-manage cell_v2 create_cell --name=cell1 --verbose" nova
+				su -s /bin/sh -c "nova-manage db sync" nova
+
+}
+
+function nova_enable_restart {
+						echocolor "Kiem tra nova cell"
+						sleep 3					
+						nova-manage cell_v2 list_cells
+ 
+            echocolor "Restart dich vu nova"
+						sleep 3
+						systemctl enable openstack-nova-api.service \
+						openstack-nova-consoleauth.service openstack-nova-scheduler.service \
+						openstack-nova-conductor.service openstack-nova-novncproxy.service
+											
+						systemctl start openstack-nova-api.service \
+						openstack-nova-consoleauth.service openstack-nova-scheduler.service \
+						openstack-nova-conductor.service openstack-nova-novncproxy.service
+        
+}
+
+############################
+# Thuc thi cac functions
+## Goi cac functions
+############################
+source config.cfg
 source /root/admin-openrc
+############################
 
-
-cat << EOF > /root/demo-openrc
-export OS_PROJECT_DOMAIN_NAME=Default
-export OS_USER_DOMAIN_NAME=Default
-export OS_PROJECT_NAME=demo
-export OS_USERNAME=demo
-export OS_PASSWORD=$DEMO_PASS
-export OS_AUTH_URL=http://$CTL1_IP_NIC1:5000/v3
-export OS_IDENTITY_API_VERSION=3
-export OS_IMAGE_API_VERSION=2
-
-EOF
-chmod +x /root/demo-openrc
-}
-
-echocolor "Cai dat Keystone"
+echocolor "Bat dau cai dat NOVA"
+echocolor "Tao DB NOVA"
 sleep 3
+nova_create_db
 
-echocolor "Tao DB keystone"
+echocolor "Tao user va endpoint cho NOVA"
 sleep 3
-create_keystone_db
+nova_user_endpoint
 
-echocolor "Cai dat va cau hinh keystone"
+echocolor "Cai dat NOVA"
 sleep 3
-keystone_install_config
+nova_install
 
-echocolor "Sync DB cho keystone"
+echocolor "Cau hinh cho NOVA"
 sleep 3
-keystone_syncdb
+nova_config
 
-echocolor "Thu hien bootstrap cho keystone"
+echocolor "Dong bo DB cho NOVA"
 sleep 3
-keystone_bootstrap
+nova_syncdb
 
-echocolor "Cau hinh http"
+echocolor "Restart dich vu NOVA"
 sleep 3
-keystone_config_http
-#bind_port
+nova_enable_restart
 
-echocolor "Tao bien moi truong"
-sleep 3
-keystone_create_adminrc
-source /root/admin-openrc
-
-echocolor "Tao Endpoint"
-sleep 3
-source /root/admin-openrc
-keystone_endpoint
+echocolor "Da cai dat xong NOVA"
