@@ -5,6 +5,7 @@ INTERFACE1=ens33
 INTERFACE2=ens34
 INTERFACE3=ens35
 
+
 IP1=$2
 IP2=$3
 IP3=$4
@@ -41,7 +42,6 @@ nmcli con modify $INTERFACE3 ipv4.addresses $IP3/$IP_NETMASK
 nmcli con modify $INTERFACE3 ipv4.method manual
 nmcli con modify $INTERFACE3 connection.autoconnect yes
 
-
 sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
 sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
 sudo systemctl disable firewalld
@@ -51,3 +51,5 @@ sudo systemctl disable NetworkManager
 sudo systemctl enable network
 sudo systemctl start network
 init 6
+
+
