@@ -74,7 +74,7 @@ function nova_config {
         ctl_nova_conf=/etc/nova/nova.conf
         cp $ctl_nova_conf $ctl_nova_conf.orig
 #		ops_edit $ctl_nova_conf DEFAULT bind_host $CTL1_IP_NIC1
-		ops_edit $ctl_nova_conf DEFAULT 
+#		ops_edit $ctl_nova_conf DEFAULT 
         ops_edit $ctl_nova_conf DEFAULT enabled_apis osapi_compute,metadata
         ops_edit $ctl_nova_conf DEFAULT transport_url rabbit://openstack:$RABBIT_PASS@$CTL1_IP_NIC1
 				
