@@ -72,7 +72,9 @@ sudo yum -y install byobu
 
 * Thực thi script noha_ctl_prepare.sh
 
-```bash noha_ctl_prepare.sh```
+```
+bash noha_ctl_prepare.sh
+```
 
 * Trong quá trình chạy script, cần nhập password cho tài khoản root của máy COM1 và COM2
 
