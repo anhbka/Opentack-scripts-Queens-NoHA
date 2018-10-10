@@ -72,13 +72,13 @@ sudo yum -y install byobu
 
 * Thực thi script noha_ctl_prepare.sh
 
-```bash node_prepare.sh```
+```bash noha_ctl_prepare.sh```
 
 * Trong quá trình chạy script, cần nhập password cho tài khoản root của máy COM1 và COM2
 
 2.3. Thực thi script noha_ctl_install_db_rabbitmq.sh để cài đặt DB và các gói bổ trợ.
 
-`bash ctl_install_db_rabbitmq.sh`
+`bash noha_ctl_install_db_rabbitmq.sh`
 
 2.4. Thực thi script ctl_keystone.sh để cài đặt Keystone.
 
@@ -207,7 +207,18 @@ chmod +x *.sh
 bash noha_cinder_install.sh
 ```
 
+Dùng lệnh kiểm tra trên node controller:
 
+``` sh
+[root@controller ~]# openstack volume service list
++------------------+-------------+------+---------+-------+----------------------------+
+| Binary           | Host        | Zone | Status  | State | Updated At                 |
++------------------+-------------+------+---------+-------+----------------------------+
+| cinder-backup    | controller  | nova | enabled | up    | 2018-10-10T01:37:50.000000 |
+| cinder-scheduler | controller  | nova | enabled | up    | 2018-10-10T03:44:47.000000 |
+| cinder-volume    | cinder1@lvm | nova | enabled | up    | 2018-10-10T03:44:49.000000 |
++------------------+-------------+------+---------+-------+----------------------------+
+```
 
 
 
