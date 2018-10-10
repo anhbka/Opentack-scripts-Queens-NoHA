@@ -196,7 +196,16 @@ Kiểm tra :
 
 4. Cài đặt trên node Cinder
 
+* Cài đặt git và script cài đặt.
 
+``` sh
+yum -y install git
+git clone https://github.com/anhbka/Opentack-scripts-Queens-NoHA.git
+mv Opentack-scripts-Queens-NoHA/scripts/ /root
+cd scripts
+chmod +x *.sh
+bash noha_cinder_install.sh
+```
 
 
 
