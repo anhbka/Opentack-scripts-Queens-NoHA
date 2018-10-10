@@ -111,7 +111,7 @@ function cinder_install_config() {
 
 		ops_edit $ctl_cinder_conf database connection  mysql+pymysql://cinder:$PASS_DATABASE_CINDER@$CTL1_IP_NIC1/cinder
 
-		ops_edit $ctl_cinder_conf keystone_authtoken www_authenticate_uri http://$CTL1_IP_NIC1:5000
+		ops_edit $ctl_cinder_conf keystone_authtoken auth_uri http://$CTL1_IP_NIC1:5000
 		ops_edit $ctl_cinder_conf keystone_authtoken auth_url http://$CTL1_IP_NIC1:5000
 		ops_edit $ctl_cinder_conf keystone_authtoken memcached_servers $CTL1_IP_NIC1:11211
 		ops_edit $ctl_cinder_conf keystone_authtoken auth_type password
