@@ -69,8 +69,6 @@ function khai_bao_host {
         echo "$COM1_IP_NIC1 compute1" >> /etc/hosts
         echo "$COM2_IP_NIC1 compute2" >> /etc/hosts
         echo "$CINDER1_IP_NIC1 cinder1" >> /etc/hosts
-        echo "$SWIFT1_IP_NIC1 swift1" >> /etc/hosts
-        echo "$SWIFT2_IP_NIC1 swift2" >> /etc/hosts
         scp /etc/hosts root@$COM1_IP_NIC1:/etc/
         scp /etc/hosts root@$COM2_IP_NIC1:/etc/
 }
