@@ -50,7 +50,6 @@ Chuyển sang quyền root:
 * Cài đặt git và script cài đặt.
 
 ``` sh
-yum -y install git
 git clone https://github.com/anhbka/Opentack-scripts-Queens-NoHA.git
 mv Opentack-scripts-Queens-NoHA/scripts/ /root
 cd scripts
@@ -61,7 +60,6 @@ Nếu muốn sửa các IP thì sử dụng VI hoặc VIM để sửa, cần lư
 Nếu cần thiết thì cài ứng dụng `byobu` để khi các phiên `ssh` bị mất kết nối thì có thể sử dụng lại (để sử đụng lại thì cần ssh vào và gõ lại lệnh byobu)
 
 ``` sh
-sudo yum -y install epel-release
 sudo yum -y install byobu
 ```
 * Gõ lệnh byobu

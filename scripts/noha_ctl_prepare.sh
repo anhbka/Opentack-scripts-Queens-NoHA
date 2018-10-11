@@ -57,7 +57,7 @@ function install_repo_openstack {
         ssh root@$IP_ADD << EOF 
 yum -y install centos-release-openstack-queens
 yum -y upgrade
-yum -y install crudini wget vim
+yum -y install crudini wget vim git epel-release byobu
 yum -y install python-openstackclient openstack-selinux python2-PyMySQL
 yum -y update
 EOF
@@ -119,9 +119,9 @@ function install_memcached() {
 		systemctl start memcached.service
 }
 
-#----------------------------------------------------------------------------#
-# 							 Start functions 						 		 # 															 				 
-#----------------------------------------------------------------------------#
+#-------------------------------------------------------------------------#
+# 							 Start functions 						 	  # 															 				 
+#-------------------------------------------------------------------------#
 echocolor "Cai dat cac goi chuan bi tren CONTROLLER"
 sleep 3
 
@@ -150,7 +150,7 @@ hostnamectl set-hostname $CTL1_HOSTNAME
 ssh root@$COM1_IP_NIC1 "hostnamectl set-hostname $COM1_HOSTNAME"
 ssh root@$COM2_IP_NIC1 "hostnamectl set-hostname $COM2_HOSTNAME"
 
-echocolor "XONG & KHOI DONG LAI MAY CHU"
+echocolor "Restart"
 sleep 5
 ssh root@$COM1_IP_NIC1 'init 6'
 ssh root@$COM2_IP_NIC1 'init 6'

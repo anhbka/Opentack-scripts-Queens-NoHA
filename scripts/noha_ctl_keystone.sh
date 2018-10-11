@@ -118,9 +118,9 @@ EOF
 chmod +x /root/demo-openrc
 }
 
-#----------------------------------------------------------------------------#
-# 							 Start functions 						 		 # 															 				 
-#----------------------------------------------------------------------------#
+#--------------------------------------------------------------------#
+# 							 Start functions 						 # 															 				 
+#--------------------------------------------------------------------#
 echocolor "Cai dat Keystone"
 sleep 3
 
@@ -132,7 +132,7 @@ echocolor "Cai dat va cau hinh keystone"
 sleep 3
 keystone_install_config
 
-echocolor "Sync DB cho keystone"
+echocolor "Dong bo DB cho keystone"
 sleep 3
 keystone_syncdb
 
