@@ -43,10 +43,6 @@ function com_nova_config {
 	ops_edit $com_nova_conf DEFAULT firewall_driver nova.virt.firewall.NoopFirewallDriver
 	ops_edit $com_nova_conf DEFAULT transport_url rabbit://openstack:$RABBIT_PASS@$CTL1_IP_NIC1
 
-	ops_edit $com_nova_conf DEFAULT instance_usage_audit True
-	ops_edit $com_nova_conf DEFAULT instance_usage_audit_period hour
-	ops_edit $com_nova_conf DEFAULT notify_on_state_change vm_and_task_state
-
 	ops_edit $com_nova_conf api auth_strategy  keystone
 
 	ops_edit $com_nova_conf keystone_authtoken auth_uri http://$CTL1_IP_NIC1:5000
