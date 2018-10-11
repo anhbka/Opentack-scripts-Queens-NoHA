@@ -29,6 +29,36 @@ function ops_del {
 	crudini --del $1 $2 $3
 }
 
+function khai_bao_host {
+        echo "$CTL1_IP_NIC1 controller1" >> /etc/hosts
+        echo "$COM1_IP_NIC1 compute1" >> /etc/hosts
+        echo "$COM2_IP_NIC1 compute2" >> /etc/hosts
+        echo "$CINDER1_IP_NIC1 cinder1" >> /etc/hosts
+}
+
+function install_packages () {
+		yum -y install chrony
+		sed -i 's/server 0.centos.pool.ntp.org iburst/ \
+server 1.vn.pool.ntp.org iburst \
+server 0.asia.pool.ntp.org iburst \
+server 3.asia.pool.ntp.org iburst/g' /etc/chrony.conf
+                  sed -i 's/server 1.centos.pool.ntp.org iburst/#/g' /etc/chrony.conf
+                  sed -i 's/server 2.centos.pool.ntp.org iburst/#/g' /etc/chrony.conf
+                  sed -i 's/server 3.centos.pool.ntp.org iburst/#/g' /etc/chrony.conf
+                  sed -i 's/#allow 192.168.0.0\/16/allow 192.168.239.0\/24/g' /etc/chrony.conf
+                  sleep 5                  
+                  systemctl enable chronyd.service
+                  systemctl start chronyd.service
+                  systemctl restart chronyd.service
+                  chronyc sources
+}
+
+function install_repo_openstack {
+yum -y install centos-release-openstack-queens
+yum -y install crudini wget vim git epel-release byobu
+yum -y update
+}
+
 function cinder_create_db() {
 	mysql -uroot -p$PASS_DATABASE_ROOT  -e "CREATE DATABASE cinder;
 	GRANT ALL PRIVILEGES ON cinder.* TO 'cinder'@'localhost' IDENTIFIED BY '$PASS_DATABASE_CINDER';

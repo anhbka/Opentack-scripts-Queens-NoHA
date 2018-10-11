@@ -80,15 +80,12 @@ function nova_config {
         ops_edit $ctl_nova_conf DEFAULT my_ip $CTL1_IP_NIC1
         ops_edit $ctl_nova_conf DEFAULT use_neutron true
         ops_edit $ctl_nova_conf DEFAULT firewall_driver nova.virt.firewall.NoopFirewallDriver
-        ops_edit $ctl_nova_conf DEFAULT osapi_compute_listen \$my_ip
-        ops_edit $ctl_nova_conf DEFAULT metadata_listen \$my_ip
         
-
         
         ops_edit $ctl_nova_conf api_database connection  mysql+pymysql://nova:$PASS_DATABASE_NOVA_API@$CTL1_IP_NIC1/nova_api
         ops_edit $ctl_nova_conf database connection  mysql+pymysql://nova:$PASS_DATABASE_NOVA@$CTL1_IP_NIC1/nova
 				
-        ops_edit $ctl_nova_conf api auth_strategy  keystone
+        ops_edit $ctl_nova_conf api auth_strategy keystone
 
         ops_edit $ctl_nova_conf keystone_authtoken auth_uri http://$CTL1_IP_NIC1:5000		
         ops_edit $ctl_nova_conf keystone_authtoken auth_url http://$CTL1_IP_NIC1:5000
