@@ -60,7 +60,7 @@ function keystone_bootstrap {
 }
 
 function keystone_config_http() {
-          echo "ServerName `hostname`" >> /etc/httpd/conf/httpd.conf
+          echo "ServerName controller" >> /etc/httpd/conf/httpd.conf
           ln -s /usr/share/keystone/wsgi-keystone.conf /etc/httpd/conf.d/
           systemctl enable httpd.service
           systemctl start httpd.service 
