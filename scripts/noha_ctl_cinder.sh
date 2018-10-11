@@ -7,9 +7,9 @@
 source config.cfg
 
 function echocolor {
-	echo "#######################################################################"
-	echo "$(tput setaf 2)##### $1 #####$(tput sgr0)"
-	echo "#######################################################################"
+    echo "#---------------------------------------------------------------------#"
+    echo "$(tput setaf 2)##### $1 #####$(tput sgr0)                              "
+    echo "#---------------------------------------------------------------------#"
 
 }
 
@@ -174,15 +174,13 @@ function create_lvm() {
     # fix filter cua lvm tren CentOS 7.4, chen vao dong 141 cua file /etc/lvm/lvm.conf
     sed -i '141i\        filter = [ "a/vda/", "a/vdb/", "r/.*/"]' /etc/lvm/lvm.conf
 	else 
-		echocolor "Khong cau hinh LVM vi ko cai cinder-volume"
+		echocolor "Khong cau hinh LVM vi khong cai cinder-volume"
 	fi
 	 
 }
-
-############################
-# Thuc thi cac functions
-## Goi cac functions
-############################
+#----------------------------------------------------------------------------#
+# 							 Start functions 						 		 # 															 				 
+#----------------------------------------------------------------------------#
 source /root/admin-openrc
 echocolor "Bat dau cai dat CINDER"
 create_lvm $1

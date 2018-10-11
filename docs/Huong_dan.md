@@ -40,7 +40,7 @@ bash setup_ip.sh cinder1 192.168.239.183 10.10.10.183 172.16.10.183
 
 ### 2. Thực hiện cài đặt trên Controller
 
-2.1. Tải script
+### 2.1. Tải script
 
 Đứng trên node CTL1 và thực hiện các bước dưới.
 
@@ -68,7 +68,7 @@ sudo yum -y install byobu
 
 `byobu`
 
-2.2. Thực thi script noha_ctl_prepare.sh
+### 2.2. Thực thi script noha_ctl_prepare.sh
 
 * Thực thi script noha_ctl_prepare.sh
 
@@ -78,11 +78,11 @@ bash noha_ctl_prepare.sh
 
 * Trong quá trình chạy script, cần nhập password cho tài khoản root của máy COM1 và COM2
 
-2.3. Thực thi script noha_ctl_install_db_rabbitmq.sh để cài đặt DB và các gói bổ trợ.
+### 2.3. Thực thi script noha_ctl_install_db_rabbitmq.sh để cài đặt DB và các gói bổ trợ.
 
 `bash noha_ctl_install_db_rabbitmq.sh`
 
-2.4. Thực thi script ctl_keystone.sh để cài đặt Keystone.
+### 2.4. Thực thi script ctl_keystone.sh để cài đặt Keystone.
 
 ```bash noha_ctl_keystone.sh```
 
@@ -106,7 +106,7 @@ Kiểm tra lại xem đã thao tác được với OpenStack bằng CLI hay chư
 +------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 [root@controller ~]#
 ```
-2.5. Thực thi script noha_ctl_glance.sh để cài đặt Glance.
+### 2.5. Thực thi script noha_ctl_glance.sh để cài đặt Glance.
 
 * Thực thi script dưới để cài đặt Glance.
 
@@ -125,7 +125,7 @@ Kiểm tra lại xem đã thao tác được với OpenStack bằng CLI hay chư
 [root@controller ~]#
 ```
 
-2.6. Thực thi script noha_ctl_nova.sh.sh để cài đặt Nova.
+### 2.6. Thực thi script noha_ctl_nova.sh.sh để cài đặt Nova.
 
 * Thực thi script dưới để cài đặt Nova.
 ``` sh
@@ -146,17 +146,23 @@ Sau khi script thực thi xong, kiểm tra xem nova đã cài đặt thành côn
 [root@controller ~]#
 ```
 
-2.7. Thực thi script noha_ctl_neutron.sh để cài đặt Neutron.
+### 2.7. Thực thi script noha_ctl_neutron.sh để cài đặt Neutron.
 
 * Thực thi script dưới để cài đặt Neutron.
 
 ` bash noha_ctl_neutron.sh`
 
-2.8. Thực thi script noha_ctl_cinder.sh để cài đặt Cinder.
+### 2.8. Thực thi script noha_ctl_cinder.sh để cài đặt Cinder.
+
+Nếu cài riêng node cinder thì sử dụng lệnh:
 
 `bash noha_ctl_cinder.sh`
 
-2.9. Thực thi script noha_ctl_horizon.sh để cài đặt Dashboad.
+Cài Cinder trên node controller sử dụng lệnh:
+
+`bash noha_ctl_cinder.sh aio`
+
+### 2.9. Thực thi script noha_ctl_horizon.sh để cài đặt Dashboad.
 
 `bash noha_ctl_horizon.sh`
 
@@ -200,7 +206,7 @@ Kiểm tra :
 [root@controller ~]#
 ```
 
-4. Cài đặt trên node Cinder
+### 4. Cài đặt trên node Cinder
 
 * Cài đặt git và script cài đặt.
 

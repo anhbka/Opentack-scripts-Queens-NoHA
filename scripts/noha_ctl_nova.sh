@@ -6,9 +6,9 @@
 source config.cfg
 
 function echocolor {
-    echo "#######################################################################"
-    echo "$(tput setaf 2)##### $1 #####$(tput sgr0)"
-    echo "#######################################################################"
+    echo "#---------------------------------------------------------------------#"
+    echo "$(tput setaf 2)##### $1 #####$(tput sgr0)                              "
+    echo "#---------------------------------------------------------------------#"
 
 }
 
@@ -74,7 +74,6 @@ function nova_config {
         ctl_nova_conf=/etc/nova/nova.conf
         cp $ctl_nova_conf $ctl_nova_conf.orig
 #		ops_edit $ctl_nova_conf DEFAULT bind_host $CTL1_IP_NIC1
-#		ops_edit $ctl_nova_conf DEFAULT 
         ops_edit $ctl_nova_conf DEFAULT enabled_apis osapi_compute,metadata
         ops_edit $ctl_nova_conf DEFAULT transport_url rabbit://openstack:$RABBIT_PASS@$CTL1_IP_NIC1
 				
@@ -136,9 +135,21 @@ function nova_config {
         ops_edit $ctl_nova_conf cinder os_region_name RegionOne
 }
 
-
+function config_nova (){
+echo "
+<Directory /usr/bin>
+   <IfVersion >= 2.4>
+      Require all granted
+   </IfVersion>
+   <IfVersion < 2.4>
+      Order allow,deny
+      Allow from all
+   </IfVersion>
+</Directory>
+" >> /etc/httpd/conf.d/00-nova-placement-api.conf
+}
 function nova_syncdb {
-				cat ./files/00-nova-placement-api.conf > /etc/httpd/conf.d/00-nova-placement-api.conf
+#				cat ./files/00-nova-placement-api.conf > /etc/httpd/conf.d/00-nova-placement-api.conf
 				systemctl restart httpd
 				
         su -s /bin/sh -c "nova-manage api_db sync" nova
@@ -165,13 +176,12 @@ function nova_enable_restart {
         
 }
 
-############################
-# Thuc thi cac functions
-## Goi cac functions
-############################
+#----------------------------------------------------------------------------#
+# 							 Start functions 						 		 # 															 				 
+#----------------------------------------------------------------------------#
 source config.cfg
 source /root/admin-openrc
-############################
+#--------------------------#
 
 echocolor "Bat dau cai dat NOVA"
 echocolor "Tao DB NOVA"
@@ -197,5 +207,7 @@ nova_syncdb
 echocolor "Restart dich vu NOVA"
 sleep 3
 nova_enable_restart
+sleep 3
+config_nova
 
 echocolor "Da cai dat xong NOVA"

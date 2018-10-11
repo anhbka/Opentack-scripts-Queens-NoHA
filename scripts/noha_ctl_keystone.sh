@@ -7,9 +7,9 @@
 source config.cfg
 
 function echocolor {
-    echo "#######################################################################"
-    echo "$(tput setaf 2)##### $1 #####$(tput sgr0)"
-    echo "#######################################################################"
+    echo "#---------------------------------------------------------------------#"
+    echo "$(tput setaf 2)##### $1 #####$(tput sgr0)                              "
+    echo "#---------------------------------------------------------------------#"
 
 }
 
@@ -67,6 +67,7 @@ function keystone_config_http() {
 }
 
 function keystone_endpoint() {
+		openstack domain create --description "An Example Domain" example
         openstack project create service --domain default --description "Service Project" 
         openstack project create demo --domain default --description "Demo Project" 
         openstack user create demo --domain default --password $DEMO_PASS
@@ -117,10 +118,9 @@ EOF
 chmod +x /root/demo-openrc
 }
 
-############################
-# Thuc thi cac functions
-## Goi cac functions
-############################
+#----------------------------------------------------------------------------#
+# 							 Start functions 						 		 # 															 				 
+#----------------------------------------------------------------------------#
 echocolor "Cai dat Keystone"
 sleep 3
 
