@@ -34,13 +34,12 @@ function nova_create_db {
       GRANT ALL PRIVILEGES ON nova_api.* TO 'nova'@'localhost' IDENTIFIED BY '$PASS_DATABASE_NOVA_API';
       GRANT ALL PRIVILEGES ON nova_api.* TO 'nova'@'%' IDENTIFIED BY '$PASS_DATABASE_NOVA_API';
       GRANT ALL PRIVILEGES ON nova_api.* TO 'nova'@'$CTL1_IP_NIC1' IDENTIFIED BY '$PASS_DATABASE_NOVA_API';
-
       CREATE DATABASE nova;
       GRANT ALL PRIVILEGES ON nova.* TO 'nova'@'localhost' IDENTIFIED BY '$PASS_DATABASE_NOVA';
       GRANT ALL PRIVILEGES ON nova.* TO 'nova'@'%' IDENTIFIED BY '$PASS_DATABASE_NOVA';
       GRANT ALL PRIVILEGES ON nova.* TO 'nova'@'$CTL1_IP_NIC1' IDENTIFIED BY '$PASS_DATABASE_NOVA';
 			
-	  CREATE DATABASE nova_cell0;
+			CREATE DATABASE nova_cell0;
       GRANT ALL PRIVILEGES ON nova_cell0.* TO 'nova'@'localhost' IDENTIFIED BY '$PASS_DATABASE_NOVA_CELL';
       GRANT ALL PRIVILEGES ON nova_cell0.* TO 'nova'@'%' IDENTIFIED BY '$PASS_DATABASE_NOVA_CELL';
       GRANT ALL PRIVILEGES ON nova_cell0.* TO 'nova'@'$CTL1_IP_NIC1' IDENTIFIED BY '$PASS_DATABASE_NOVA_CELL';
@@ -73,19 +72,25 @@ function nova_install {
 function nova_config {
         ctl_nova_conf=/etc/nova/nova.conf
         cp $ctl_nova_conf $ctl_nova_conf.orig
-#		ops_edit $ctl_nova_conf DEFAULT bind_host $CTL1_IP_NIC1
+
         ops_edit $ctl_nova_conf DEFAULT enabled_apis osapi_compute,metadata
         ops_edit $ctl_nova_conf DEFAULT transport_url rabbit://openstack:$RABBIT_PASS@$CTL1_IP_NIC1
 				
         ops_edit $ctl_nova_conf DEFAULT my_ip $CTL1_IP_NIC1
         ops_edit $ctl_nova_conf DEFAULT use_neutron true
         ops_edit $ctl_nova_conf DEFAULT firewall_driver nova.virt.firewall.NoopFirewallDriver
+        ops_edit $ctl_nova_conf DEFAULT osapi_compute_listen \$my_ip
+        ops_edit $ctl_nova_conf DEFAULT metadata_listen \$my_ip
         
+        ops_edit $ctl_nova_conf DEFAULT instance_usage_audit True
+        ops_edit $ctl_nova_conf DEFAULT instance_usage_audit_period hour
+        ops_edit $ctl_nova_conf DEFAULT notify_on_state_change vm_and_task_state
+
         
         ops_edit $ctl_nova_conf api_database connection  mysql+pymysql://nova:$PASS_DATABASE_NOVA_API@$CTL1_IP_NIC1/nova_api
         ops_edit $ctl_nova_conf database connection  mysql+pymysql://nova:$PASS_DATABASE_NOVA@$CTL1_IP_NIC1/nova
 				
-        ops_edit $ctl_nova_conf api auth_strategy keystone
+        ops_edit $ctl_nova_conf api auth_strategy  keystone
 
         ops_edit $ctl_nova_conf keystone_authtoken auth_uri http://$CTL1_IP_NIC1:5000		
         ops_edit $ctl_nova_conf keystone_authtoken auth_url http://$CTL1_IP_NIC1:5000
@@ -132,21 +137,9 @@ function nova_config {
         ops_edit $ctl_nova_conf cinder os_region_name RegionOne
 }
 
-function config_nova (){
-echo "
-<Directory /usr/bin>
-   <IfVersion >= 2.4>
-      Require all granted
-   </IfVersion>
-   <IfVersion < 2.4>
-      Order allow,deny
-      Allow from all
-   </IfVersion>
-</Directory>
-" >> /etc/httpd/conf.d/00-nova-placement-api.conf
-}
+
 function nova_syncdb {
-#				cat ./files/00-nova-placement-api.conf > /etc/httpd/conf.d/00-nova-placement-api.conf
+				cat ./files/00-nova-placement-api.conf > /etc/httpd/conf.d/00-nova-placement-api.conf
 				systemctl restart httpd
 				
         su -s /bin/sh -c "nova-manage api_db sync" nova
@@ -178,7 +171,7 @@ function nova_enable_restart {
 #----------------------------------------------------------------------------#
 source config.cfg
 source /root/admin-openrc
-#--------------------------#
+############################
 
 echocolor "Bat dau cai dat NOVA"
 echocolor "Tao DB NOVA"
@@ -204,7 +197,5 @@ nova_syncdb
 echocolor "Restart dich vu NOVA"
 sleep 3
 nova_enable_restart
-sleep 3
-config_nova
 
 echocolor "Da cai dat xong NOVA"

@@ -151,10 +151,9 @@ function neutron_enable_restart() {
 			systemctl start neutron-l3-agent.service
 }
 
-#--------------------------#
-# Thuc thi cac functions   #
-## Goi cac functions       #
-#--------------------------#
+#----------------------------------------------------------------------------#
+# 							 Start functions 						 		 # 															 				 
+#----------------------------------------------------------------------------#
 source config.cfg
 source /root/admin-openrc
 ############################

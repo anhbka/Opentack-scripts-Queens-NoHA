@@ -5,9 +5,9 @@
 source config.cfg
 
 function echocolor {
-    echo "#---------------------------------------------------------------------#"
-    echo "$(tput setaf 2)##### $1 #####$(tput sgr0)                              "
-    echo "#---------------------------------------------------------------------#"
+    echo "#######################################################################"
+    echo "$(tput setaf 3)##### $1 #####$(tput sgr0)"
+    echo "#######################################################################"
 
 }
 
@@ -43,9 +43,13 @@ function com_nova_config {
 	ops_edit $com_nova_conf DEFAULT firewall_driver nova.virt.firewall.NoopFirewallDriver
 	ops_edit $com_nova_conf DEFAULT transport_url rabbit://openstack:$RABBIT_PASS@$CTL1_IP_NIC1
 
+	ops_edit $com_nova_conf DEFAULT instance_usage_audit True
+	ops_edit $com_nova_conf DEFAULT instance_usage_audit_period hour
+	ops_edit $com_nova_conf DEFAULT notify_on_state_change vm_and_task_state
+
 	ops_edit $com_nova_conf api auth_strategy  keystone
 
-	ops_edit $com_nova_conf keystone_authtoken auth_uri http://$CTL1_IP_NIC1:5000
+	ops_edit $com_nova_conf keystone_authtoken www_authenticate_uri http://$CTL1_IP_NIC1:5000
 	ops_edit $com_nova_conf keystone_authtoken auth_url http://$CTL1_IP_NIC1:5000
 	ops_edit $com_nova_conf keystone_authtoken memcached_servers $CTL1_IP_NIC1:11211
 	ops_edit $com_nova_conf keystone_authtoken auth_type password
@@ -84,21 +88,17 @@ function com_nova_config {
 
 	ops_edit $com_nova_conf libvirt virt_type  $(count=$(egrep -c '(vmx|svm)' /proc/cpuinfo); if [ $count -eq 0 ];then   echo "qemu"; else   echo "kvm"; fi)
 	ops_edit $com_nova_conf oslo_messaging_notifications driver messagingv2
-
     ops_edit $com_nova_conf cinder os_region_name RegionOne
 	
 }
-
 function com_nova_restart {
         systemctl enable libvirtd.service openstack-nova-compute.service
         systemctl start libvirtd.service openstack-nova-compute.service
 }
-
 function com_neutron_install {
         yum install -y  openstack-neutron openstack-neutron-ml2 openstack-neutron-linuxbridge ebtables
         yum install -y openstack-neutron-linuxbridge ebtables ipset
 }
-
 function com_neutron_config {
         com_neutron_conf=/etc/neutron/neutron.conf
         com_ml2_conf=/etc/neutron/plugins/ml2/ml2_conf.ini
@@ -124,7 +124,7 @@ function com_neutron_config {
         ops_edit $com_neutron_conf oslo_messaging_rabbit rabbit_userid openstack
         ops_edit $com_neutron_conf oslo_messaging_rabbit rabbit_password $RABBIT_PASS
         
-        ops_edit $com_neutron_conf keystone_authtoken auth http://$CTL1_IP_NIC1:5000
+        ops_edit $com_neutron_conf keystone_authtoken auth_uri http://$CTL1_IP_NIC1:5000
         ops_edit $com_neutron_conf keystone_authtoken auth_url http://$CTL1_IP_NIC1:5000
         ops_edit $com_neutron_conf keystone_authtoken memcached_servers $CTL1_IP_NIC1:11211
         ops_edit $com_neutron_conf keystone_authtoken auth_type password
@@ -152,7 +152,6 @@ function com_neutron_config {
         ops_edit $com_dhcp_agent DEFAULT dhcp_driver neutron.agent.linux.dhcp.Dnsmasq
         ops_edit $com_dhcp_agent DEFAULT force_metadata True
 }
-
 function com_neutron_restart {
         systemctl enable neutron-linuxbridge-agent.service
         systemctl enable neutron-metadata-agent.service
@@ -161,34 +160,26 @@ function com_neutron_restart {
         systemctl start neutron-linuxbridge-agent.service
         systemctl start neutron-metadata-agent.service
         systemctl start neutron-dhcp-agent.service
-
 }
-
 #----------------------------------------------------------------------------#
 # 							 Start functions 						 		 # 															 				 
 #----------------------------------------------------------------------------#
 yum -y update 
-
 echocolor "Install dich vu NOVA"
 sleep 3
 com_nova_install
-
 echocolor "Config dich vu NOVA"
 sleep 3
 com_nova_config
-
 echocolor "Restart dich vu NOVA"
 sleep 3
 com_nova_restart
-
 echocolor "Install dich vu NEUTRON"
 sleep 3
 com_neutron_install
-
 echocolor "Config dich vu NEUTRON"
 sleep 3
 com_neutron_config
-
 echocolor "Restart dich vu NEUTRON"
 sleep 3
 com_neutron_restart
